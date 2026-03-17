@@ -1,0 +1,32 @@
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.junie/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+target/
+out/
+
+# Gradle
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+# Maven
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
