@@ -1,0 +1,4 @@
+{
+  "name": "mongodb",
+  "description": "MongoDB patterns: NoSQL document design, Spring Data MongoDB, and aggregation pipelines"
+}
