@@ -1,86 +1,63 @@
 # Junie Skills
 
-Curated skill packs for [Junie](https://www.jetbrains.com/junie/) — the AI coding agent by JetBrains.
+Curated skill extensions for [Junie](https://www.jetbrains.com/junie/) — the AI coding agent by JetBrains.
 
-Skills are structured knowledge files that give Junie domain expertise: best practices, code patterns, anti-patterns, and checklists for specific technologies and tasks. When a skill is activated, Junie follows its guidance to produce higher-quality code and reviews.
+Extensions give Junie domain expertise: best practices, code patterns, anti-patterns, and checklists for specific technologies. Each extension can include skills (knowledge files) and MCP servers (tools).
 
-## Repository Structure
+## Extensions
+
+| Extension | Skills | MCP | Description |
+|-----------|--------|-----|-------------|
+| `context7` | 1 | Context7, DeepWiki | Up-to-date library docs and repository knowledge |
+| `java-engineer` | 1 | — | Java 21 language features, idioms, and coding standards |
+| `kotlin-engineer` | 1 + 8 references | — | Kotlin language, coroutines, Ktor, KMP, Android Compose, architecture |
+| `spring-boot-engineer` | 1 + 9 references | — | Spring Boot 3.x — web, data, security, cloud, testing, reactive, resilience |
+| `sql-engineer` | 1 | DBHub | SQL, Flyway/Liquibase migrations, query optimization |
+| `redis-engineer` | 1 | — | Redis data structures, caching patterns, best practices |
+
+## Combining Extensions
+
+Extensions are designed to work independently or together without conflicts:
+
+| Use Case | Extensions |
+|----------|-----------|
+| Java + Spring Boot | `java-engineer` + `spring-boot-engineer` + `sql-engineer` |
+| Kotlin + Spring Boot | `kotlin-engineer` + `spring-boot-engineer` + `sql-engineer` |
+| Pure Kotlin (Ktor / Android / KMP) | `kotlin-engineer` |
+| Pure Java | `java-engineer` |
+| Any project with Redis | + `redis-engineer` |
+| Any project (always useful) | + `context7` |
+
+## Structure
+
+Each extension lives in `extensions/<name>/` and may contain:
 
 ```
-jvm-base/              # Skills for JVM (Java/Kotlin) projects
-  spring-boot-patterns/
-  jpa-patterns/
-  kotlin-code-style/
-  ...
+extensions/<name>/
+  extension.json          # name + description
+  skills/<skill-name>/
+    SKILL.md              # main skill file
+    references/           # optional detailed references loaded on-demand
+  mcp/
+    .mcp.json             # optional MCP server definitions
 ```
 
-Each skill is a directory containing:
-- `SKILL.md` — main skill file with frontmatter (`name`, `description`), patterns, and examples
-- `references/` — (optional) detailed reference files linked from the main skill
-
-## Skill Packs
-
-### `jvm-base`
-
-21 skills covering the core JVM ecosystem:
-
-| Category | Skills |
-|----------|--------|
-| **Spring Boot** | `spring-boot-patterns`, `spring-cloud-patterns`, `spring-actuator-patterns`, `spring-testing` |
-| **Data** | `jpa-patterns`, `sql-patterns`, `mongodb-patterns`, `redis-patterns` |
-| **Security** | `security-audit`, `validation-patterns` |
-| **Architecture** | `architecture-review`, `api-design-patterns`, `performance-patterns`, `concurrency-patterns` |
-| **Messaging** | `messaging-patterns` |
-| **DevOps** | `docker-patterns`, `kubernetes-patterns`, `ci-cd-patterns` |
-| **Language** | `kotlin-code-style` |
-| **Testing** | `test-quality` |
-| **Debugging** | `debugging-investigation-patterns` |
-
-## Skill Format
-
-Each `SKILL.md` follows this structure:
+### Skill Format
 
 ```markdown
 ---
 name: "skill-name"
-description: "One-line description used for skill selection."
+description: "One-line description."
 ---
 
-# Skill Title
+# Title
 
-## Scope and Boundaries
-- What this skill covers
-- When to defer to other skills
-
-## When to Use
-- Trigger conditions
-
-## Core Patterns
-- Code examples with ✅ good / ❌ bad annotations
-
-## Anti-Patterns
-- Common mistakes to avoid
+## Reference Guide         ← hub-and-spoke: table pointing to references/
+## Key Patterns            ← quick-start code examples
+## Constraints             ← MUST DO / MUST NOT DO
 ```
 
-## How Skills Are Selected
-
-Skills are activated automatically based on project analysis:
-- **Language detection** — Java/Kotlin source files and build configuration
-- **Dependency detection** — build.gradle.kts, pom.xml, and version catalogs are scanned for library dependencies
-- **File detection** — presence of Dockerfile, k8s manifests, CI configs, etc.
-
-For example, a Spring Boot project with JPA and Redis will automatically receive: `spring-boot-patterns`, `jpa-patterns`, `sql-patterns`, `redis-patterns`, `security-audit`, `spring-testing`, and the core JVM skills.
-
-## Contributing
-
-When adding or modifying skills:
-
-1. Follow the skill format above — include Scope/Boundaries, When to Use, and Anti-Patterns sections
-2. Use code examples with `✅`/`❌` annotations to show good vs bad patterns
-3. Keep examples as pattern fragments, not copy-paste production code
-4. Add cross-references to related skills using backtick-quoted skill names (e.g., "see `jpa-patterns`")
-5. Avoid duplicating content — reference other skills instead
-6. Test that skill detection rules in Junie correctly activate the skill for target projects
+Reference files are loaded on-demand based on context — only the relevant ones are read for each task.
 
 ## License
 
