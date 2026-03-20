@@ -12,7 +12,8 @@ Best practices and patterns for Spring Boot applications.
 - Treat this skill as the high-level guide for project structure, controllers, services, DTO boundaries, and exception handling.
 - For deep or version-sensitive topics, defer to canonical skills:
   - `validation-patterns` for Bean Validation details
-  - `jpa-patterns` for entity mapping, fetch plans, and transaction pitfalls
+  - `jpa-patterns` for entity mapping, fetch plans, and transaction pitfalls (**lives in the `sql-database` extension**)
+  - `webflux-patterns` for reactive controllers, WebClient, Mono/Flux, and blocking anti-patterns
   - `security-audit` for Spring Security and secure coding guidance
   - `spring-testing` for test slices, Boot test annotations, and Testcontainers
 - Examples in this file are pattern fragments, not copy-paste-ready production code; adapt imports, beans, package names, and framework versions to the current project.
@@ -271,7 +272,8 @@ public interface UserMapper {
 ## Skill Boundaries
 
 - Prefer `validation-patterns` when changing constraints, validation groups, nested validation, or error payloads.
-- Prefer `jpa-patterns` when modifying entities, relationships, fetch mode, transaction scope, or Hibernate tuning.
+- Prefer `jpa-patterns` (in `sql-database` extension) when modifying entities, relationships, fetch mode, transaction scope, or Hibernate tuning.
+- Prefer `webflux-patterns` when working with reactive controllers, WebClient, Mono/Flux chains, SSE, or mixing blocking/reactive code.
 - Prefer `security-audit` when touching authentication, authorization, secrets, CSRF, CORS, headers, or security filters.
 - Prefer `spring-testing` when adding or reviewing Spring tests.
 
@@ -522,25 +524,8 @@ data class JwtProperties(
 ```
 
 ### Coroutine-based async (Spring WebFlux / suspend)
-```kotlin
-// With Spring WebFlux (reactive)
-@RestController
-class UserController(private val userService: UserService) {
 
-    @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: Long): UserResponse =
-        userService.findById(id)  // suspending call
-}
-
-@Service
-class UserService(private val userRepository: UserRepository) {
-
-    suspend fun findById(id: Long): UserResponse = withContext(Dispatchers.IO) {
-        userRepository.findById(id).orElseThrow { ResourceNotFoundException("User", id) }
-            .let { UserResponse(it.id, it.name, it.email) }
-    }
-}
-```
+For reactive Kotlin patterns with WebFlux (`suspend`, `Mono`, `Flux`, coroutines), see the `webflux-patterns` skill.
 
 ### Kotlin-specific Anti-patterns
 ```kotlin
