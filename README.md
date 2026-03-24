@@ -1,32 +1,8 @@
-# Junie Skills
+# Junie Extensions
 
-Curated skill extensions for [Junie](https://www.jetbrains.com/junie/) — the AI coding agent by JetBrains.
+Curated extensions for [Junie](https://www.jetbrains.com/junie/) — the AI coding agent by JetBrains.
 
-Extensions give Junie domain expertise: best practices, code patterns, anti-patterns, and checklists for specific technologies. Each extension can include skills (knowledge files) and MCP servers (tools).
-
-## Extensions
-
-| Extension | Skills | MCP | Description |
-|-----------|--------|-----|-------------|
-| `context7` | 1 | Context7, DeepWiki | Up-to-date library docs and repository knowledge |
-| `java-engineer` | 1 | — | Java 21 language features, idioms, and coding standards |
-| `kotlin-engineer` | 1 + 8 references | — | Kotlin language, coroutines, Ktor, KMP, Android Compose, architecture |
-| `spring-boot-engineer` | 1 + 9 references | — | Spring Boot 3.x — web, data, security, cloud, testing, reactive, resilience |
-| `sql-engineer` | 1 | DBHub | SQL, Flyway/Liquibase migrations, query optimization |
-| `redis-engineer` | 1 | — | Redis data structures, caching patterns, best practices |
-
-## Combining Extensions
-
-Extensions are designed to work independently or together without conflicts:
-
-| Use Case | Extensions |
-|----------|-----------|
-| Java + Spring Boot | `java-engineer` + `spring-boot-engineer` + `sql-engineer` |
-| Kotlin + Spring Boot | `kotlin-engineer` + `spring-boot-engineer` + `sql-engineer` |
-| Pure Kotlin (Ktor / Android / KMP) | `kotlin-engineer` |
-| Pure Java | `java-engineer` |
-| Any project with Redis | + `redis-engineer` |
-| Any project (always useful) | + `context7` |
+Extensions give Junie domain expertise: best practices, code patterns, anti-patterns, and checklists for specific technologies. Each extension can include skills (knowledge files), agents, guidelines, and MCP servers (tools).
 
 ## Structure
 
@@ -38,9 +14,19 @@ extensions/<name>/
   skills/<skill-name>/
     SKILL.md              # main skill file
     references/           # optional detailed references loaded on-demand
+  agents/                 # optional custom agent definitions
+  guidelines/             # optional project-level guidelines and conventions
   mcp/
     .mcp.json             # optional MCP server definitions
 ```
+
+**`skills/`** — knowledge files that give Junie domain expertise. Each skill has a main `SKILL.md` and optional `references/` loaded on-demand.
+
+**`agents/`** — custom agent definitions for specialized workflows within the extension's domain.
+
+**`guidelines/`** — project-level conventions, coding standards, and decision records that Junie should follow when working on the project.
+
+**`mcp/`** — MCP server definitions that provide additional tools (databases, APIs, etc.) for the extension.
 
 ### Skill Format
 
