@@ -2,9 +2,6 @@
   "mcpServers": {
     "Context7": {
       "url": "https://mcp.context7.com/mcp"
-    },
-    "DeepWiki": {
-      "url": "https://mcp.deepwiki.com/mcp"
     }
   }
 }
