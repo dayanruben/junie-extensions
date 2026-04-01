@@ -1,3 +1,8 @@
+---
+name: java-engineer
+description: Java 21 language features, idioms, and coding standards. Use when writing Java code involving records, sealed classes, virtual threads, streams, or generics.
+---
+
 # Java 21 — Language Features & Idioms
 
 ## Records

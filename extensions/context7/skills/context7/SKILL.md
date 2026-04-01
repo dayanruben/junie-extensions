@@ -1,3 +1,8 @@
+---
+name: context7
+description: Up-to-date library and framework documentation via Context7 MCP. Use when setup, API, or version-specific questions require current documentation.
+---
+
 # Context7
 
 Provides up-to-date library and framework documentation. Use instead of relying on training data for library-specific questions.
