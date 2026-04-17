@@ -226,6 +226,104 @@ public boolean isActive() {}
 public boolean hasPermission(String role) {}
 ```
 
+## Design Patterns
+
+Quick reference — choose the pattern that fits the problem.
+
+| Problem | Pattern | When |
+|---|---|---|
+| Many optional constructor params | **Builder** | 4+ params, some optional |
+| Create objects without knowing type | **Factory** | Type determined at runtime |
+| Swap algorithms at runtime | **Strategy** | Behavior varies by context |
+| Add behavior without subclassing | **Decorator** | Dynamic composition |
+| Notify many objects of changes | **Observer** | One-to-many dependency |
+| Wrap incompatible interface | **Adapter** | Legacy / third-party integration |
+
+```java
+// Builder — use Lombok @Builder or implement manually
+@Builder
+public class EmailMessage {
+    private final String to;       // required
+    private final String subject;  // required
+    private final String body;     // optional
+    private final List<String> cc; // optional
+}
+
+EmailMessage msg = EmailMessage.builder()
+    .to("user@example.com")
+    .subject("Welcome")
+    .body("Hello!")
+    .build();
+
+// Factory — hides concrete type, returns interface
+public interface NotificationSender {
+    void send(String message);
+}
+
+public class NotificationSenderFactory {
+    public static NotificationSender create(String channel) {
+        return switch (channel) {
+            case "email" -> new EmailSender();
+            case "sms"   -> new SmsSender();
+            case "push"  -> new PushSender();
+            default      -> throw new IllegalArgumentException("Unknown channel: " + channel);
+        };
+    }
+}
+
+// Strategy — inject behavior, swap without changing caller
+public interface PricingStrategy {
+    BigDecimal calculate(Order order);
+}
+
+@Service
+public class CheckoutService {
+    private final PricingStrategy pricing;
+
+    public CheckoutService(PricingStrategy pricing) { this.pricing = pricing; }
+
+    public BigDecimal checkout(Order order) {
+        return pricing.calculate(order);
+    }
+}
+
+// Observer — Spring ApplicationEvent is the idiomatic choice in Spring Boot apps
+// For plain Java, use functional observers:
+@FunctionalInterface
+public interface OrderListener {
+    void onOrderCreated(Order order);
+}
+
+public class OrderService {
+    private final List<OrderListener> listeners = new ArrayList<>();
+
+    public void addListener(OrderListener listener) { listeners.add(listener); }
+
+    public Order create(CreateOrderRequest request) {
+        Order order = /* persist */ new Order();
+        listeners.forEach(l -> l.onOrderCreated(order));
+        return order;
+    }
+}
+
+// Decorator — wrap to add behavior transparently
+public interface MessageSender {
+    void send(String message);
+}
+
+public class LoggingMessageSender implements MessageSender {
+    private final MessageSender delegate;
+
+    public LoggingMessageSender(MessageSender delegate) { this.delegate = delegate; }
+
+    @Override
+    public void send(String message) {
+        log.info("Sending message: length={}", message.length());
+        delegate.send(message);
+    }
+}
+```
+
 ## Immutability
 
 ```java
