@@ -22,7 +22,7 @@ Bugs here compile, pass trivial tests, and fail in production. Collected from re
 ## `readonly`
 
 - `readonly` property can be written **only from the declaring class** and **only once** — not from a child constructor directly; the parent constructor must assign.
-- **Mutation through references bypasses readonly**: `$ref = &$obj->prop; $ref = 'new';` — silently succeeds on PHP 8.1–8.2, throws on 8.3. Banned by policy.
+- **Direct reference to a readonly property throws on all PHP 8.1+ versions**: `$ref = &$obj->prop` → `Error: Cannot take reference of a readonly property`. PHP 8.3 additionally closed indirect bypass loopholes (e.g., via array references). Banned by policy regardless of version.
 - `readonly class` (PHP 8.2+) implies `readonly` on all properties. You can't add a non-readonly property; you can't inherit a non-readonly class.
 - `clone` copies the readonly values as-is. To "modify" — implement a `with*` method that returns a new instance.
 - Readonly doesn't make nested mutable objects immutable: `readonly array $items` can still be mutated if the array contains objects (arrays themselves are by-value, but object references inside are by-identity).

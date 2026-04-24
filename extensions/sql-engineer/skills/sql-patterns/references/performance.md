@@ -46,7 +46,7 @@ Look for:
   Requires a stable sort key. For composite sorts: `WHERE (created_at, id) > (:last_ts, :last_id)`.
 - **OFFSET pagination** — O(n + offset), degrades linearly. Fine for admin UI with small offsets; lethal for `LIMIT 20 OFFSET 100000`.
 - **`COUNT(*)`** for total on huge tables: use estimates.
-  - Postgres: `SELECT reltuples::bigint FROM pg_class WHERE relname = ?` (stats-based, stale by default).
+  - Postgres: `SELECT reltuples::bigint FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = ? AND n.nspname = 'public'` (stats-based, stale by default; filter by schema to avoid ambiguity when the same table name exists in multiple schemas).
   - MySQL: `information_schema.TABLES.TABLE_ROWS` (InnoDB estimate).
 
 ## Joins

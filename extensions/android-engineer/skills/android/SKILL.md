@@ -81,6 +81,7 @@ class UserViewModel(
     fun load(id: String) = viewModelScope.launch {
         _state.value = UserUiState.Loading
         _state.value = runCatching { repo.user(id) }
+            .onFailure { if (it is CancellationException) throw it }  // never swallow cancellation
             .fold({ UserUiState.Success(it) }, { UserUiState.Error(it.message ?: "Error") })
     }
 }

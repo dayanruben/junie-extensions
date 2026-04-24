@@ -51,6 +51,6 @@ Ship an empty `V1__baseline.sql` (or schema dump) matching that version, then ne
 
 - Editing an applied migration → `FlywayException: Validate failed: Migration checksum mismatch`. Fix: create a corrective migration, or (rare, last resort) `flyway repair` in non-prod.
 - Putting `BEGIN; … COMMIT;` inside a Flyway SQL file → Flyway already runs each migration in a transaction; manual `BEGIN` breaks that and can leave partial state.
-- `CREATE INDEX CONCURRENTLY` inside a transactional migration → Postgres rejects it. Use Flyway's `-- SET SCRIPT_PARAMETER$$$$` or configure `spring.flyway.group=false` + put the statement in its own non-transactional migration.
+- `CREATE INDEX CONCURRENTLY` inside a transactional migration → Postgres rejects it. Put the statement in its own migration file and add `-- flyway.nonTransactional=true` as the first line to run it outside a transaction.
 - Relying on `ddl-auto=update` "just this once" → divergence between dev and prod schemas, migrations stop matching reality.
 - Running `flyway clean` in a shared environment → all data wiped. Always `clean-disabled=true` outside isolated local dev.

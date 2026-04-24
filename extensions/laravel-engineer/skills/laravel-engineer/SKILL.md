@@ -75,5 +75,5 @@ When implementing a feature, deliver in this order:
 2. Model with casts, relationships, scopes
 3. Form Request + Service / Action
 4. Controller + API Resource
-5. Pest tests
+5. Tests (Pest if the project uses it, PHPUnit otherwise)
 6. One-line explanation of key architecture decisions

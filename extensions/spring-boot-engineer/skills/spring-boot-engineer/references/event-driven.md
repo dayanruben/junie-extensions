@@ -22,7 +22,7 @@ Generic Spring `@EventListener` / Kafka knowledge is assumed. This file covers t
 ## Kafka basics — what to get right
 
 - **Idempotent consumer is not optional.** Kafka delivery is "at least once"; the same message can arrive twice. Use an idempotency key (message ID + consumer group) stored in DB, skip if already processed.
-- `enable.auto.commit=false` + manual ack (`Acknowledgment.acknowledge()` after business logic succeeds). The Spring Boot default `enable-auto-commit=true` can commit offsets *before* your handler finishes → message lost on crash.
+- Use manual acknowledgment: set `spring.kafka.listener.ack-mode=MANUAL_IMMEDIATE` and call `acknowledgment.acknowledge()` after business logic succeeds. Spring Kafka disables Kafka's native `enable.auto.commit` by default when using listener containers, but the default `AckMode.BATCH` commits after the entire batch completes — a handler crash mid-batch still causes redelivery, and with `BATCH` you lose per-message control.
 - Consumer `max.poll.interval.ms` must comfortably exceed your longest handler. Otherwise the consumer is kicked from the group, partition rebalances, message redelivered to another instance.
 - Producer: `acks=all`, `enable.idempotence=true`, `retries=Integer.MAX_VALUE`, `max.in.flight.requests.per.connection=5`. Those are the safe defaults for "exactly once" at the producer side.
 - Error handling: configure `DefaultErrorHandler` with a `DeadLetterPublishingRecoverer` after N retries. Never throw from a listener without a DLT — you'll get infinite redelivery.

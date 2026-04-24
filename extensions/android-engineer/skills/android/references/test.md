@@ -6,7 +6,7 @@ Unit tests (VM / UseCase / Repository) and UI tests (Compose / Espresso).
 
 | Type | Location | Tools | Run |
 |------|----------|-------|-----|
-| Unit (logic) | `src/test/` | JUnit5, MockK, kotlinx-coroutines-test, Turbine | `./gradlew test` |
+| Unit (logic) | `src/test/` | JUnit5 (requires `de.mannodermaus.junit5` Gradle plugin — not built into AGP; if the project uses JUnit4, skip the plugin), MockK, kotlinx-coroutines-test, Turbine | `./gradlew test` |
 | UI / Integration | `src/androidTest/` | Compose Testing, Espresso, Hilt test rules | `./gradlew connectedAndroidTest` |
 | Screenshot | `src/androidTest/` or Paparazzi | Paparazzi / Showkase / Shot | `./gradlew verifyPaparazziDebug` |
 

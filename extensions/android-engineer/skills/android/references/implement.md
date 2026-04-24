@@ -19,7 +19,7 @@ Step-by-step workflow for adding a new feature or screen to an Android app.
 4. **Implement bottom-up** — data → domain → UI:
    1. Entity / Model (domain types, Room `@Entity`).
    2. DAO and API interface (`suspend` functions, `Flow` returns).
-   3. Repository / UseCase — business logic. Handle errors **at the Repository boundary**: wrap API/DAO calls in `runCatching`, fall back to cache on failure, and only rethrow once no recovery is possible (see the `UserRepository` example in `SKILL.md`). Do not leak `IOException` / `HttpException` upward — the ViewModel should map a thrown `Throwable` into `UiState.Error`, nothing lower-level.
+   3. Repository / UseCase — business logic. Handle errors **at the Repository boundary**: wrap API/DAO calls in `runCatching`, fall back to cache on failure, and only rethrow once no recovery is possible (see the `UserRepository` example in `SKILL.md`). Do not leak `IOException` / `HttpException` upward — the ViewModel should map a thrown `Throwable` into `UiState.Error`, nothing lower-level. **Important**: always rethrow `CancellationException` from `runCatching`: `.onFailure { if (it is CancellationException) throw it }` — swallowing it disables coroutine cancellation.
    4. ViewModel — exposes `StateFlow<UiState>`, no `Context`.
    5. UI layer — pick based on what the project uses:
       - **Compose**: Composable that handles loading / error / empty / content states (`references/compose.md`).

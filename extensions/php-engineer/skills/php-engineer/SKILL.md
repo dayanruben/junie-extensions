@@ -38,9 +38,9 @@ Before writing non-trivial code:
 - **No untyped `array` in public API** — annotate with PHPDoc: `/** @param list<User> $users */` or `/** @return array<string, int> */`.
 - **No raw `SimpleXMLElement` / `json_decode` without validation** — use `json_validate()` (PHP 8.3+) first, or `JSON_THROW_ON_ERROR`.
 - **No `(array)` cast on objects** to "export state" — it exposes private/protected with mangled keys (`"\0*\0prop"`).
-- **No mutating a `readonly` property through a reference** — `$ref = &$obj->prop; $ref = 'x';` bypasses readonly (PHP 8.1–8.2 bug-feature).
+- **No mutating a `readonly` property through a reference** — `$ref = &$obj->prop` throws `Error` on PHP 8.1+; PHP 8.3 also closed indirect bypass loopholes. Use `clone` or a `with*()` factory method to produce a modified copy.
 - **No `foreach ($arr as &$v)` without `unset($v)` after** — the reference leaks to the outer scope and a later assignment silently mutates the array.
-- **No `count($big) === 0` to check emptiness** — `count` walks the array. Use `$big === []` or `empty($big)`.
+- **No `count($big) === 0` to check emptiness** — use `$big === []` or `empty($big)`. `count()` on a `Countable` object can be expensive, and `count(null)` returns `0` silently (pre-8.x).
 - **No `!=` / `==`** — always `!==` / `===`. `0 == "abc"` was `true` until PHP 8, and string/array comparisons still surprise.
 - **No catching `\Throwable`** to silence errors — catch the specific exception type or let it propagate.
 - **No `global` / service locator** — constructor-inject everything.

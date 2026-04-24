@@ -112,7 +112,7 @@ Same expand-contract — route via a view first, let all consumers migrate, then
 
 ## Idempotency defensive patterns
 
-- `CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS` — available on Postgres, MySQL 8.0.29+, SQLite. Helpful for repairs and re-applies.
+- `CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS` — available on Postgres, MySQL 8.0.29+, SQLite 3.35+. Helpful for repairs and re-applies.
 - For types/columns without `IF NOT EXISTS`, wrap in a `DO $$ ... EXCEPTION ... END $$` (Postgres) or a conditional in `information_schema`.
 - Don't over-idempotent — Flyway/Liquibase already track state. Use idempotency only where DDL isn't transactional (MySQL).
 

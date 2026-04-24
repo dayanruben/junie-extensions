@@ -28,7 +28,7 @@ Rules:
 Pitfalls:
 - `data class Foo(val id: Long, val name: String)` used as an entity → `equals` based on all fields changes with mutation, bugs in sets / maps.
 - Value classes don't satisfy Java interop for `@Entity` / JPA — they're inlined and have no no-arg constructor.
-- `copy()` on data class ignores custom constructor validation — if you have invariants, `require(...)` in `init` only, and make fields `val`.
+- `copy()` calls the primary constructor, so `init` blocks **do** run — `require(...)` in `init` IS enforced on `copy()`. However, `copy()` bypasses secondary constructors and factory methods. If validation lives only there (not in `init`), `copy()` will skip it — put invariants in `init`.
 
 ## Extension functions — when and where
 

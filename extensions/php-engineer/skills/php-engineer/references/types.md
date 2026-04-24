@@ -94,7 +94,7 @@ Do NOT use early-return `throw` without proper typing — write the guard as a m
 
 ## PHPStan / Psalm runtime
 
-- `vendor/bin/phpstan analyse` — target level 8 (or 9 for new projects, which is strict about `mixed`).
+- `vendor/bin/phpstan analyse` — target level 8 (or 9 for new projects, which is strict about `mixed`; level 10 = "bleeding edge" rules, opt-in for projects that want maximum strictness).
 - Ignore errors only via `@phpstan-ignore-next-line` with a comment explaining why — never silent via config-wide `ignoreErrors`.
 - Baseline allowed only for legacy code; new code must not add lines to the baseline.
 - On CI: `phpstan analyse --no-progress --error-format=github` + fail on error.

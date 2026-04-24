@@ -44,7 +44,7 @@ Collected from real Redis incidents, not from the `redis.io` command reference. 
 
 - **Lists**: `LPUSH` + `RPOP` is a queue; `LPUSH` + `LPOP` is a stack. `LTRIM` after `LPUSH` caps length. `LPOS` (6.0.6+) replaces manual scan.
 - **Sets**: `SMEMBERS` on a big set is O(N). Use `SSCAN`.
-- **Sorted sets**: `ZADD NX` = insert only; `XX` = update only; `GT`/`LT` update only if score is greater/less. Overlooked additions as of Redis 6.2.
+- **Sorted sets**: `ZADD NX` = insert only; `XX` = update only (both since Redis 3.0.2). `ZADD GT`/`LT` = update only if score is greater/less — added in Redis 6.2 and easy to miss.
 - **Hashes**: `HGETALL` on a 1M-field hash is a server stall. Split: `HGETALL u:42` is fine; `HGETALL all_users` is not.
 - **Streams** (`XADD`, `XREAD`, `XREADGROUP`, consumer groups) are the correct primitive for at-least-once messaging. Pub/Sub isn't.
   - `XADD k MAXLEN ~ 10000 *` — capped trim (`~` is approximate, much faster than exact).
@@ -70,7 +70,7 @@ Collected from real Redis incidents, not from the `redis.io` command reference. 
 ## Security
 
 - **Default port 6379 bound to all interfaces is a known attack vector.** Bind to `127.0.0.1` for single-host, or use `bind` with explicit internal IPs; require `AUTH`.
-- **`ACL SETUSER`** (6.0+) — least-privilege users. Cache workload user needs only `~cache:* &* +get +set +del +expire +scan +ping`. Kill the default `default` user's ability to `FLUSHALL` in production.
+- **`ACL SETUSER`** (6.0+) — least-privilege users. Cache workload user needs only `~cache:* +get +set +del +expire +scan +ping` (no `&*` — that grants pub/sub channel access, not needed for cache). Kill the default `default` user's ability to `FLUSHALL` in production.
 - **TLS**: enable on all client connections in multi-tenant / cross-network deployments. Built-in since 6.0.
 - **Lua sandbox**: scripts run in a sandbox but CAN read any key. Don't accept Lua scripts from user input.
 - **Rename dangerous commands** in redis.conf: `rename-command FLUSHALL ""`, same for `KEYS`, `DEBUG`, `CONFIG`, `SHUTDOWN` if not needed.

@@ -9,7 +9,7 @@ Assumes basic Gradle knowledge. This file is the setup policy and the compiler-p
   ```toml
   [versions]
   kotlin = "2.0.21"
-  coroutines = "1.9.0"
+  coroutines = "1.10.0"
   [libraries]
   coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
   [plugins]
