@@ -11,7 +11,7 @@ Baseline PHP 8.x knowledge (enums, readonly, match, nullsafe, union/intersection
 
 Before writing non-trivial code:
 
-1. **PHP version** — `composer.json` must declare `"php": ">=8.3"` (or higher). PHP 8.2 is in security-only mode; 8.3+ is the minimum for new projects. Check `php --version` if running locally.
+1. **PHP version** — `composer.json` must declare `"php": ">=8.4"` (or higher). PHP 8.4 is the current active release; 8.3 is in security-only mode (active support ended Dec 2025); 8.2 has security support until Dec 2026 but should not be chosen for new projects. Check `php --version` if running locally.
 2. **`declare(strict_types=1);`** at the top of every file. Non-negotiable — without it PHP coerces `"42"` → `42`, `3.7` → `3`, `"abc"` → `0` silently.
 3. **Static analysis** — `vendor/bin/phpstan` (target level 8+) and/or `vendor/bin/psalm`. If missing, suggest `composer require --dev phpstan/phpstan`. Run before presenting code.
 4. **Formatter** — `vendor/bin/pint` / `php-cs-fixer` / `phpcs`. Respect the existing config; don't introduce new violations.
@@ -40,7 +40,7 @@ Before writing non-trivial code:
 - **No `(array)` cast on objects** to "export state" — it exposes private/protected with mangled keys (`"\0*\0prop"`).
 - **No mutating a `readonly` property through a reference** — `$ref = &$obj->prop` throws `Error` on PHP 8.1+; PHP 8.3 also closed indirect bypass loopholes. Use `clone` or a `with*()` factory method to produce a modified copy.
 - **No `foreach ($arr as &$v)` without `unset($v)` after** — the reference leaks to the outer scope and a later assignment silently mutates the array.
-- **No `count($big) === 0` to check emptiness** — use `$big === []` or `empty($big)`. `count()` on a `Countable` object can be expensive, and `count(null)` returns `0` silently (pre-8.x).
+- **No `count($big) === 0` to check emptiness** — use `$big === []` or `empty($big)`. `count()` on a `Countable` object can be expensive; `count(null)` throws `TypeError` on PHP 8.0+.
 - **No `!=` / `==`** — always `!==` / `===`. `0 == "abc"` was `true` until PHP 8, and string/array comparisons still surprise.
 - **No catching `\Throwable`** to silence errors — catch the specific exception type or let it propagate.
 - **No `global` / service locator** — constructor-inject everything.

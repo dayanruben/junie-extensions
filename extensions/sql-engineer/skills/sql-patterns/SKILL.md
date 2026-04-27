@@ -43,9 +43,9 @@ Do not suggest schema changes or index additions without first confirming the cu
 - **No functions on indexed columns in `WHERE`.** `WHERE YEAR(created_at) = 2024` ignores the index — use `WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'`. Or create a functional / expression index.
 - **No `OR` across different columns in `WHERE`** when one side isn't indexed — split into `UNION ALL` (or create a combined index).
 - **No `ALTER TABLE ... ADD COLUMN NOT NULL` without default** on a large table — locks the table, rewrites every row. Split into: add nullable column → backfill in batches → add NOT NULL constraint.
-- **No `CREATE INDEX`** on a large write-active table without `CONCURRENTLY` (Postgres) / `ONLINE` (MySQL 5.6+, default in 8.0) / `WITH (ONLINE = ON)` (SQL Server) — blocks writes for the duration.
+- **No `CREATE INDEX`** on a large write-active table without `CONCURRENTLY` (Postgres) / `ALGORITHM=INPLACE LOCK=NONE` (MySQL 8.0) / `WITH (ONLINE = ON)` (SQL Server) — blocks writes for the duration.
 - **No editing applied migrations.** Flyway checksums them; Liquibase hashes them. Changing a released `V3__add_email.sql` breaks every environment. Add a new migration.
-- **No `SELECT COUNT(*)` on large tables** for pagination UIs — it's a full scan on Postgres (MVCC can't use index). Use approximate counts (`pg_class.reltuples`) or "more results" cursor.
+- **No `SELECT COUNT(*)` on large tables** for pagination UIs — on Postgres it's expensive; index-only scan is possible only when the visibility map is fully up-to-date (Postgres 9.2+, write-heavy tables rarely qualify). Use approximate counts (`pg_class.reltuples`) or a "load more" cursor instead.
 - **No `DISTINCT` to fix duplicate rows** — it masks a broken JOIN. Fix the join.
 - **No implicit type casts in joins** (`JOIN x ON x.id = y.id_str`) — disables indexes, silently wrong if types differ. Match types.
 - **No credentials, PII, or secrets in migration files** — they go to version control forever.

@@ -12,7 +12,7 @@ Baseline Redis knowledge (strings, hashes, lists, sets, sorted sets, streams, pu
 Before writing non-trivial Redis code:
 
 1. **Connection & topology** — standalone, replicated (Sentinel), or Cluster? Cluster changes multi-key commands rules (hash tags required). Check `INFO replication` and `CLUSTER INFO` if unsure.
-2. **Redis version** — many "modern" patterns require 6.2+ (`SET ... EX ... NX ... KEEPTTL`, `COPY`, `GETEX`); streams / ACLs require 5.0+; functions require 7.0+. `INFO server | redis_version`.
+2. **Redis version** — `KEEPTTL` in `SET` requires 6.0+; `COPY`, `GETEX`, `LPOS`, `ZADD GT/LT`, `XADD MINID` require 6.2+; functions require 7.0+; sharded Pub/Sub (`SPUBLISH`/`SSUBSCRIBE`) requires 7.0+. `INFO server | grep redis_version`.
    > **Redis 8 note**: Redis 8 unified Redis Community with Redis Stack — JSON, Search, TimeSeries, Bloom filters are now built-in, not add-ons. If running Redis 8+, these data types are available by default. All patterns in this skill apply equally to Redis 7.x and 8.x.
 3. **`maxmemory` + `maxmemory-policy`** — `CONFIG GET maxmemory-policy`. Default `noeviction` → writes fail when full. Caches should be `allkeys-lru` / `allkeys-lfu`. Mixed (cache + durable data) → `volatile-lru` + TTL on cached keys only.
 4. **Persistence mode** — RDB, AOF, both, or none. Affects restart semantics, fork memory, fsync latency. `CONFIG GET save` + `CONFIG GET appendonly`.
